@@ -1,7 +1,11 @@
 function App() {
   return (
     <>
-      <h1>CRM - WINKSOLUTIONS</h1>
+      <div>
+        <h1 className="text-3xl text-center text-cyan-950">
+          CRM + WinkSolutions
+        </h1>
+      </div>
     </>
   );
 }
