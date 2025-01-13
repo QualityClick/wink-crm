@@ -1,5 +1,9 @@
 const FacebookPage = () => {
-  return <div>FacebookPage</div>;
+  return (
+    <>
+      <h1>Facebook Page</h1>
+    </>
+  );
 };
 
 export default FacebookPage;
