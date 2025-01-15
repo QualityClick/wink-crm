@@ -1,14 +1,26 @@
-import { Bell, Calendar, Cog, PlusCircle, Timer } from "lucide-react";
+import { Bell, Calendar, Cog, PlusCircle, Timer, Menu } from "lucide-react";
 
 export default function Navbar() {
   return (
-    <nav className="flex items-center justify-between bg-white shadow p-4">
-      <div className="flex items-center gap-2">
-        <img src="/img/winksolutions_logo.jpg" alt="Logo" className="w-8 h-8" />
-        <h1 className="text-xl font-bold text-gray-800">Wink CRM</h1>
+    <nav className="flex items-center justify-between bg-white shadow-md p-4 md:px-8">
+      {/* Botón de hamburguesa: visible solo en móviles */}
+      <div className="flex items-center gap-4">
+        <button className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 md:hidden">
+          <Menu className="w-6 h-6 text-gray-800" />
+        </button>
+        {/* Logo y marca: visibles solo en pantallas medianas o más grandes */}
+        <div className="hidden md:flex items-center gap-2">
+          <img
+            src="/img/winksolutions_logo.jpg"
+            alt="Logo"
+            className="w-8 h-8"
+          />
+          <h1 className="text-xl font-bold text-gray-800">Wink CRM</h1>
+        </div>
       </div>
 
-      <div className="flex items-center w-1/2">
+      {/* Buscador: visible solo en escritorio */}
+      <div className="hidden md:flex items-center w-1/2">
         <input
           type="text"
           placeholder="Search"
@@ -16,6 +28,7 @@ export default function Navbar() {
         />
       </div>
 
+      {/* Acciones */}
       <div className="flex items-center gap-4">
         <Timer className="text-gray-600 w-6 h-6" />
         <Bell className="text-gray-600 w-6 h-6" />
