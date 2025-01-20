@@ -1,27 +1,89 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Layout from "@/components/layout/Layout";
 
-// Pages (create these as separate components)
-import Dashboard from "./pages/Dashboard";
-import Customers from "./pages/Customers";
-import Projects from "./pages/Projects";
-import Tasks from "./pages/Tasks";
-import Reports from "./pages/Reports";
-import Support from "./pages/Support";
+// Pages
+import Login from "@/pages/Login";
+import Dashboard from "@/pages/Dashboard";
+import Customers from "@/pages/Customers";
+import Projects from "@/pages/Projects";
+import Tasks from "@/pages/Tasks";
+import Reports from "@/pages/Reports";
+import Support from "@/pages/Support";
+import NotFound from "@/pages/NotFound";
 
 export default function App() {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/tasks" element={<Tasks />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/support" element={<Support />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Ruta pública */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Rutas protegidas */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customers"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Customers />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Projects />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tasks"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Tasks />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Reports />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Support />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ruta para manejar páginas no encontradas */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </Router>
   );
 }

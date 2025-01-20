@@ -1,6 +1,16 @@
 import { Bell, Calendar, Cog, PlusCircle, Timer, Menu } from "lucide-react";
+import { useAuthStore } from "@/stores/authStore";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout(); // Limpiar el estado de usuario
+    navigate("/login"); // Redirigir al login
+  };
+
   return (
     <nav className="flex items-center justify-between bg-white shadow-md p-4 md:px-8">
       {/* Botón de hamburguesa: visible solo en móviles */}
@@ -40,6 +50,12 @@ export default function Navbar() {
           alt="Profile"
           className="w-8 h-8 rounded-full border border-gray-300"
         />
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+        >
+          Logout
+        </button>
       </div>
     </nav>
   );
