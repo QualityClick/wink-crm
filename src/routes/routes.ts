@@ -1,5 +1,6 @@
 const routes = {
   dashboard: { path: "/", label: "Dashboard", icon: "Home" },
+  chat: { path: "/chat", label: "Chat", icon: "MessageCircle" },
   customers: { path: "/customers", label: "Customers", icon: "User" },
   projects: { path: "/projects", label: "Projects", icon: "ClipboardList" },
   tasks: { path: "/tasks", label: "Tasks", icon: "MessageSquare" },

@@ -13,6 +13,7 @@ import Tasks from "@/pages/Tasks";
 import Reports from "@/pages/Reports";
 import Support from "@/pages/Support";
 import NotFound from "@/pages/NotFound";
+import ChatPage from "@/pages/Chat";
 
 export default function App() {
   return (
@@ -79,6 +80,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <Support />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ChatPage />
                 </Layout>
               </ProtectedRoute>
             }
