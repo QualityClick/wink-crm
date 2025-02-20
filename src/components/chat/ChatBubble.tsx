@@ -1,26 +1,26 @@
-import { Card } from "@/components/ui/card";
-
-interface ChatBubbleProps {
+const ChatBubble = ({
+  text,
+  fromMe,
+  timestamp,
+}: {
   text: string;
   fromMe: boolean;
   timestamp: string;
-  name?: string;
-}
-
-const ChatBubble = ({ text, fromMe, timestamp, name }: ChatBubbleProps) => {
+}) => {
   return (
-    <div className={`mb-2 flex ${fromMe ? "justify-end" : "justify-start"}`}>
-      <Card
-        className={`p-3 max-w-xs rounded-2xl text-sm shadow-md ${
-          fromMe ? "bg-blue-500 text-white" : "bg-gray-300 text-black"
+    <div className={`flex ${fromMe ? "justify-end" : "justify-start"} mb-2`}>
+      <div
+        className={`p-3 rounded-lg shadow-md max-w-[70%] ${
+          fromMe
+            ? "bg-blue-600 text-white rounded-br-none"
+            : "bg-gray-200 text-gray-900 rounded-bl-none"
         }`}
       >
-        <p className="font-bold">{fromMe ? "Tú" : name || "Desconocido"}</p>
-        <p>{text}</p>
-        <span className="text-xs opacity-70 block mt-1 text-right">
-          {new Date(parseInt(timestamp) * 1000).toLocaleTimeString()}
+        <p className="text-sm">{text}</p>
+        <span className="text-xs opacity-70 block text-right mt-1">
+          {timestamp}
         </span>
-      </Card>
+      </div>
     </div>
   );
 };

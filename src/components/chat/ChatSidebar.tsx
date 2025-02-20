@@ -1,22 +1,37 @@
+import { useEffect, useState } from "react";
 import { useChatStore } from "@/stores/chatStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BiLogoWhatsapp } from "react-icons/bi";
 import { FaFacebookMessenger, FaInstagram } from "react-icons/fa";
 
-const ChatSidebar = () => {
-  const { messages } = useChatStore();
-  const uniqueContacts = Array.from(new Set(messages.map((msg) => msg.from)));
+const ChatSidebar = ({
+  onSelectChat,
+}: {
+  onSelectChat: (chat: string) => void;
+}) => {
+  const { messages, fetchMessages } = useChatStore();
   const [activeTab, setActiveTab] = useState("whatsapp");
+  const [contacts, setContacts] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchMessages(); // Obtiene los mensajes desde la API
+
+    const uniqueContacts = Array.from(new Set(messages.map((msg) => msg.from)));
+    setContacts(uniqueContacts);
+  }, [fetchMessages, messages]);
 
   return (
     <aside className="w-[320px] bg-gray-100 dark:bg-gray-800 p-4 border-r flex flex-col">
       <h2 className="text-lg font-semibold mb-4">Chats</h2>
 
-      <Tabs defaultValue="whatsapp" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs
+        defaultValue="whatsapp"
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
         <TabsList className="grid grid-cols-3">
           <TabsTrigger value="whatsapp">
             <BiLogoWhatsapp className="w-6 h-6 text-green-500" />
@@ -31,9 +46,10 @@ const ChatSidebar = () => {
 
         <ScrollArea className="h-[80vh] mt-2">
           <TabsContent value="whatsapp">
-            {uniqueContacts.map((contact) => (
+            {contacts.map((contact) => (
               <Card
                 key={contact}
+                onClick={() => onSelectChat(contact)}
                 className="p-3 mb-2 flex items-center gap-3 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700"
               >
                 <Avatar className="w-10 h-10">

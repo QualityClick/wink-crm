@@ -1,60 +1,39 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import ChatMessages from "@/components/chat/ChatMessages";
+import ChatInput from "@/components/chat/ChatInput";
 import { useChatStore } from "@/stores/chatStore";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { PaperPlaneIcon } from "@radix-ui/react-icons";
-import io from "socket.io-client";
-
-const socket = io(import.meta.env.VITE_BACKEND_URL);
 
 const ChatPage = () => {
-  const [message, setMessage] = useState("");
-  const [to, setTo] = useState("");
-  const { sendMessage, handleIncomingMessage } = useChatStore();
+  const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const { fetchMessages } = useChatStore();
 
   useEffect(() => {
-    socket.on("new_message", (data) => {
-      console.log("📩 Nuevo mensaje recibido:", data);
-      handleIncomingMessage(data);
-    });
-
-    return () => {
-      socket.off("new_message");
-    };
-  }, [handleIncomingMessage]);
+    if (selectedChat) {
+      fetchMessages(); // ✅ Ahora sí pasamos `selectedChat`
+    }
+  }, [selectedChat, fetchMessages]);
 
   return (
-    <div className="flex h-screen bg-white dark:bg-gray-900">
-      <ChatSidebar />
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <ChatSidebar onSelectChat={setSelectedChat} />
       <main className="flex-1 flex flex-col relative">
-        <div className="p-4 border-b bg-gray-100 dark:bg-gray-800 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Conversación</h2>
+        <div className="p-4 border-b bg-white dark:bg-gray-800 flex items-center justify-between shadow-sm">
+          <h2 className="text-lg font-semibold">
+            {selectedChat ? selectedChat : "Selecciona un chat"}
+          </h2>
         </div>
-        <div className="flex-1 overflow-auto p-4">
-          <ChatMessages />
+        <div className="flex-1 overflow-auto p-4 bg-gray-100 dark:bg-gray-900">
+          {selectedChat ? (
+            <ChatMessages key={selectedChat} selectedChat={selectedChat} />
+          ) : (
+            // ✅ Cambiamos `chatId` a `selectedChat`
+            <p className="text-center text-gray-500 mt-10">
+              Selecciona un chat para empezar
+            </p>
+          )}
         </div>
-        <div className="sticky bottom-0 left-0 w-full bg-white dark:bg-gray-800 border-t p-3 flex items-center gap-2">
-          <Input
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            placeholder="Número de WhatsApp"
-            className="w-1/4"
-          />
-          <Input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Escribe un mensaje..."
-            className="flex-1"
-          />
-          <Button
-            onClick={() => sendMessage(to, message)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 flex items-center gap-2"
-          >
-            <PaperPlaneIcon className="w-5 h-5" /> Enviar
-          </Button>
-        </div>
+        {selectedChat && <ChatInput selectedChat={selectedChat} />}
       </main>
     </div>
   );

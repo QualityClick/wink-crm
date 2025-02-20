@@ -1,26 +1,29 @@
 import { create } from "zustand";
 import axios from "axios";
+import { io } from "socket.io-client";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+// 🔥 Configurar WebSocket con reconexión automática
+const socket = io(API_URL, {
+  transports: ["websocket"],
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 3000,
+});
 
 interface Message {
   id: string;
   from: string;
+  to?: string;
   text: string;
   timestamp: string;
-  name?: string;
 }
 
 interface ChatState {
   messages: Message[];
   fetchMessages: () => Promise<void>;
   sendMessage: (to: string, message: string) => Promise<void>;
-  handleIncomingMessage: (messageData: {
-    from: string;
-    text: string;
-    timestamp: string;
-    contacts?: { profile?: { name?: string } }[];
-  }) => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -32,10 +35,17 @@ export const useChatStore = create<ChatState>((set) => ({
       console.log("📩 Mensajes recibidos:", response.data);
 
       if (response.data && Array.isArray(response.data)) {
-        set({ messages: response.data });
-        localStorage.setItem("chatMessages", JSON.stringify(response.data));
-      } else {
-        console.error("❌ Error: La API no devuelve un array de mensajes.");
+        set((state) => {
+          const existingIds = new Set(state.messages.map((msg) => msg.id));
+          const newMessages = response.data.filter(
+            (msg: Message) => !existingIds.has(msg.id)
+          );
+
+          const updatedMessages = [...state.messages, ...newMessages];
+
+          localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+          return { messages: updatedMessages };
+        });
       }
     } catch (error) {
       console.error("❌ Error obteniendo mensajes:", error);
@@ -48,13 +58,15 @@ export const useChatStore = create<ChatState>((set) => ({
         to,
         message,
       });
+
       console.log("📤 Mensaje enviado:", response.data);
 
       const newMessage: Message = {
-        id: response.data.messages[0].id,
+        id: response.data?.messages?.[0]?.id || `${Date.now()}`,
         from: "me",
+        to,
         text: message,
-        timestamp: new Date().toISOString(),
+        timestamp: `${Math.floor(Date.now() / 1000)}`,
       };
 
       set((state) => {
@@ -62,27 +74,22 @@ export const useChatStore = create<ChatState>((set) => ({
         localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
         return { messages: updatedMessages };
       });
+
+      // 🔥 Emitir mensaje en tiempo real al WebSocket
+      socket.emit("new_message", newMessage);
     } catch (error) {
       console.error("❌ Error enviando mensaje:", error);
     }
   },
-
-  handleIncomingMessage: (messageData) => {
-    const { from, text, timestamp, contacts } = messageData;
-    const name = contacts?.[0]?.profile?.name || from;
-
-    const newMessage: Message = {
-      id: `${from}-${timestamp}`,
-      from,
-      text,
-      timestamp,
-      name,
-    };
-
-    set((state) => {
-      const updatedMessages = [...state.messages, newMessage];
-      localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
-      return { messages: updatedMessages };
-    });
-  },
 }));
+
+// 📡 Escuchar mensajes en tiempo real desde WebSocket
+socket.on("new_message", (message: Message) => {
+  console.log("📩 Nuevo mensaje recibido en WebSocket:", message);
+
+  useChatStore.setState((state) => {
+    const updatedMessages = [...state.messages, message];
+    localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+    return { messages: updatedMessages };
+  });
+});
