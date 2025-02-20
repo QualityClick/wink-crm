@@ -16,7 +16,6 @@ const ChatSidebar = () => {
     <aside className="w-[320px] bg-gray-100 dark:bg-gray-800 p-4 border-r flex flex-col">
       <h2 className="text-lg font-semibold mb-4">Chats</h2>
 
-      {/* Tabs para cambiar entre WhatsApp, Messenger e Instagram */}
       <Tabs defaultValue="whatsapp" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-3">
           <TabsTrigger value="whatsapp">

@@ -35,7 +35,7 @@ const ChatPage = () => {
         <div className="flex-1 overflow-auto p-4">
           <ChatMessages />
         </div>
-        <div className="absolute bottom-0 left-0 w-full bg-white dark:bg-gray-800 border-t p-3 flex items-center gap-2">
+        <div className="sticky bottom-0 left-0 w-full bg-white dark:bg-gray-800 border-t p-3 flex items-center gap-2">
           <Input
             value={to}
             onChange={(e) => setTo(e.target.value)}
