@@ -1,4 +1,4 @@
-import { Bell, Calendar, Cog, PlusCircle, Timer, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { useNavigate } from "react-router-dom";
 
@@ -40,11 +40,6 @@ export default function Navbar() {
 
       {/* Acciones */}
       <div className="flex items-center gap-4">
-        <Timer className="text-gray-600 w-6 h-6" />
-        <Bell className="text-gray-600 w-6 h-6" />
-        <Calendar className="text-gray-600 w-6 h-6" />
-        <Cog className="text-gray-600 w-6 h-6" />
-        <PlusCircle className="text-blue-500 w-6 h-6 cursor-pointer" />
         <img
           src="/img/profile_picture.jpeg"
           alt="Profile"

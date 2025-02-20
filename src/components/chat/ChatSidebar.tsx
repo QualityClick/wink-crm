@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { BiLogoWhatsapp } from "react-icons/bi";
+import { FaFacebookMessenger, FaInstagram } from "react-icons/fa";
 
 const ChatSidebar = () => {
   const { messages } = useChatStore();
@@ -15,15 +17,17 @@ const ChatSidebar = () => {
       <h2 className="text-lg font-semibold mb-4">Chats</h2>
 
       {/* Tabs para cambiar entre WhatsApp, Messenger e Instagram */}
-      <Tabs
-        defaultValue="whatsapp"
-        value={activeTab}
-        onValueChange={setActiveTab}
-      >
+      <Tabs defaultValue="whatsapp" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-3">
-          <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
-          <TabsTrigger value="messenger">Messenger</TabsTrigger>
-          <TabsTrigger value="instagram">Instagram</TabsTrigger>
+          <TabsTrigger value="whatsapp">
+            <BiLogoWhatsapp className="w-6 h-6 text-green-500" />
+          </TabsTrigger>
+          <TabsTrigger value="messenger">
+            <FaFacebookMessenger className="w-6 h-6 text-blue-600" />
+          </TabsTrigger>
+          <TabsTrigger value="instagram">
+            <FaInstagram className="w-6 h-6 text-pink-500" />
+          </TabsTrigger>
         </TabsList>
 
         <ScrollArea className="h-[80vh] mt-2">

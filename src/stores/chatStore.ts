@@ -8,16 +8,23 @@ interface Message {
   from: string;
   text: string;
   timestamp: string;
+  name?: string;
 }
 
 interface ChatState {
   messages: Message[];
   fetchMessages: () => Promise<void>;
   sendMessage: (to: string, message: string) => Promise<void>;
+  handleIncomingMessage: (messageData: {
+    from: string;
+    text: string;
+    timestamp: string;
+    contacts?: { profile?: { name?: string } }[];
+  }) => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
-  messages: [],
+  messages: JSON.parse(localStorage.getItem("chatMessages") || "[]"),
 
   fetchMessages: async () => {
     try {
@@ -26,6 +33,7 @@ export const useChatStore = create<ChatState>((set) => ({
 
       if (response.data && Array.isArray(response.data)) {
         set({ messages: response.data });
+        localStorage.setItem("chatMessages", JSON.stringify(response.data));
       } else {
         console.error("❌ Error: La API no devuelve un array de mensajes.");
       }
@@ -42,19 +50,39 @@ export const useChatStore = create<ChatState>((set) => ({
       });
       console.log("📤 Mensaje enviado:", response.data);
 
-      set((state) => ({
-        messages: [
-          ...state.messages,
-          {
-            id: response.data.messages[0].id,
-            from: "me",
-            text: message,
-            timestamp: new Date().toISOString(),
-          },
-        ],
-      }));
+      const newMessage: Message = {
+        id: response.data.messages[0].id,
+        from: "me",
+        text: message,
+        timestamp: new Date().toISOString(),
+      };
+
+      set((state) => {
+        const updatedMessages = [...state.messages, newMessage];
+        localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+        return { messages: updatedMessages };
+      });
     } catch (error) {
       console.error("❌ Error enviando mensaje:", error);
     }
+  },
+
+  handleIncomingMessage: (messageData) => {
+    const { from, text, timestamp, contacts } = messageData;
+    const name = contacts?.[0]?.profile?.name || from;
+
+    const newMessage: Message = {
+      id: `${from}-${timestamp}`,
+      from,
+      text,
+      timestamp,
+      name,
+    };
+
+    set((state) => {
+      const updatedMessages = [...state.messages, newMessage];
+      localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+      return { messages: updatedMessages };
+    });
   },
 }));
